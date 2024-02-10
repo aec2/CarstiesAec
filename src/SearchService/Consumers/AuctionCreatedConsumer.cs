@@ -22,6 +22,9 @@ namespace SearchService.Consumers
             Console.WriteLine($"--> AuctionCreatedConsumer received: {context.Message.Id}");
 
             var item = _mapper.Map<Item>(context.Message);
+
+            if (item.Model == "Foo") throw new ArgumentException("Cannot sell cars with name of Foo");
+            
             await item.SaveAsync();
             
         }

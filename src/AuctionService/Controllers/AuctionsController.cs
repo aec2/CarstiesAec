@@ -80,6 +80,8 @@ public class AuctionsController : ControllerBase
                 auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
                 auction.Item.Mileage = updateAuctionDto.Mileage ?? auction.Item.Mileage;
                 auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
+                
+                await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
 
                 bool result = await _context.SaveChangesAsync() > 0;
 
@@ -97,6 +99,9 @@ public class AuctionsController : ControllerBase
 
                 // TODO: Check if the current user is the seller of the auction
                 _context.Remove(auction);
+
+                await _publishEndpoint.Publish(_mapper.Map<AuctionDeleted>(new { Id = auction.Id.ToString()}));
+
                 bool result = await _context.SaveChangesAsync() > 0;
                 if (!result) return BadRequest("Could not save changes to the database");
 

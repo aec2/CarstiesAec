@@ -54,7 +54,7 @@ public class AuctionsController : ControllerBase
         {
                 var auction = _mapper.Map<Auction>(createAuctionDto);
                 auction.Seller = User.Identity.Name;
-                
+
                 _context.Auctions.Add(auction);
                 var newAuction = _mapper.Map<AuctionDto>(auction);
                 await _publishEndpoint.Publish(_mapper.Map<AuctionCreated>(newAuction));
@@ -76,14 +76,14 @@ public class AuctionsController : ControllerBase
                 if (auction == null) return NotFound();
 
                 // TODO: Check if the current user is the seller of the auction
-                if(auction.Seller != User.Identity.Name) return Forbid();
+                if (auction.Seller != User.Identity.Name) return Forbid();
 
                 auction.Item.Make = updateAuctionDto.Make ?? auction.Item.Make;
                 auction.Item.Model = updateAuctionDto.Model ?? auction.Item.Model;
                 auction.Item.Color = updateAuctionDto.Color ?? auction.Item.Color;
                 auction.Item.Mileage = updateAuctionDto.Mileage ?? auction.Item.Mileage;
                 auction.Item.Year = updateAuctionDto.Year ?? auction.Item.Year;
-                
+
                 await _publishEndpoint.Publish(_mapper.Map<AuctionUpdated>(auction));
 
                 bool result = await _context.SaveChangesAsync() > 0;
@@ -101,10 +101,10 @@ public class AuctionsController : ControllerBase
 
                 if (auction == null) return NotFound();
 
-                if(auction.Seller != User.Identity.Name) return Forbid();
+                if (auction.Seller != User.Identity.Name) return Forbid();
                 _context.Remove(auction);
 
-                await _publishEndpoint.Publish(_mapper.Map<AuctionDeleted>(new { Id = auction.Id.ToString()}));
+                await _publishEndpoint.Publish<AuctionDeleted>(new { Id = auction.Id.ToString() });
 
                 bool result = await _context.SaveChangesAsync() > 0;
                 if (!result) return BadRequest("Could not save changes to the database");

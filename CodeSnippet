@@ -1,0 +1,67 @@
+Creating a custom surround-with code snippet in Visual Studio 2022 for diagnostics purposes, like measuring execution time, is a great way to streamline your development process. Here's a step-by-step guide to achieve this:
+
+### 1. Define the Snippet
+
+First, you need to define the XML structure of your snippet. For timing diagnostics, you might want to include `System.Diagnostics.Stopwatch` to measure the execution time of a code block. Here's an example snippet definition:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets xmlns="http://schemas.microsoft.com/VisualStudio/2005/CodeSnippet">
+    <CodeSnippet Format="1.0.0">
+        <Header>
+            <Title>timeBlock</Title>
+            <Shortcut>timeBlock</Shortcut>
+            <Description>Code snippet for timing a block of code</Description>
+            <Author>Your Name</Author>
+            <SnippetTypes>
+                <SnippetType>SurroundsWith</SnippetType>
+            </SnippetTypes>
+        </Header>
+        <Snippet>
+            <Declarations>
+                <Literal>
+                    <ID>codeToMeasure</ID>
+                    <ToolTip>Place your code block here</ToolTip>
+                    <Default>Your code here</Default>
+                </Literal>
+            </Declarations>
+            <Code Language="csharp"><![CDATA[
+var stopwatch = System.Diagnostics.Stopwatch.StartNew();
+$selected$ $end$
+stopwatch.Stop();
+Console.WriteLine($"Execution Time: {stopwatch.ElapsedMilliseconds} ms");
+]]>
+            </Code>
+        </Snippet>
+    </CodeSnippet>
+</CodeSnippets>
+```
+
+### 2. Save the Snippet File
+
+Save the XML file with a `.snippet` extension, for example, `TimeBlock.snippet`. You can save it in any directory, but Visual Studio has a default snippet directory you might use for convenience, typically found at:
+
+- For your own user snippets: `%USERPROFILE%\Documents\Visual Studio 2022\Code Snippets\Visual C#\My Code Snippets`
+
+### 3. Import the Snippet into Visual Studio
+
+To use the snippet in Visual Studio 2022, you need to import it:
+
+1. Open Visual Studio.
+2. Go to **Tools** > **Code Snippets Manager**.
+3. Select **Visual C#** from the language drop-down menu.
+4. Click **Import** and navigate to where you saved your `.snippet` file.
+5. Select the snippet file and click **Open**.
+6. Choose where to save the snippet (you can keep the default location) and click **Finish**, then **OK**.
+
+### 4. Using the Snippet
+
+To use your custom snippet:
+
+1. Highlight the code block you want to surround with your diagnostic code.
+2. Press `Ctrl+K, S` to open the "Surround With" menu.
+3. Type the shortcut name for your snippet (in this example, `timeBlock`) or find it in the list and select it.
+
+This wraps the selected code block with your timing code, inserting a `Stopwatch` to measure how long the block takes to execute.
+
+Remember, the snippet above is a simple example. You can customize it further based on your specific needs, such as adding additional diagnostics information or formatting the output differently.
